@@ -1,0 +1,14 @@
+name: HTN-Clinical-Trial
+channels:
+  - conda-forge
+dependencies:
+  - pip
+  - ipython
+  - scipy
+  - scikit-learn
+  - pandas
+  - matplotlib
+  - numpy
+  - joblib
+  - cvxpy
+  - tqdm
