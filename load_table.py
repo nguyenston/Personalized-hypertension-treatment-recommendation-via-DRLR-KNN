@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/yeping/dro_knn')
+sys.path.append('/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN')
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import ShuffleSplit
@@ -14,8 +14,7 @@ def load_diabetes_final_table_for_prescription(trial_id, test_ratio=0.2):
     :param test_ratio: ratio of test data
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
-    df = pd.read_pickle('/home/rchen15/prescription/presription_shared/diabetes.p')
-
+    df = pd.read_csv('/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv',nrows=10e4,on_bad_lines='skip')
     prescription_columns = ['prescription_oral', 'prescription_injectable']
     hist_pres_columns = ['hist_prescription_oral', 'hist_prescription_injectable']
     useful_feature = [item for item in df.columns.tolist() if

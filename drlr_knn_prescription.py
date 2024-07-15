@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/yeping/dro_knn')
+sys.path.append('/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN')
 import os
 import pickle
 import argparse

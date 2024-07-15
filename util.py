@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/rchen15/prescription/run_pres')
+sys.path.append('/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN')
 
 import os
 
