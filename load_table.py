@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/huuyang/DataAndCode/Select-Optimal-Decisions-via-DRO-KNN-master')
+sys.path.append('/home/yeping/dro_knn')
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import ShuffleSplit
@@ -14,7 +14,7 @@ def load_diabetes_final_table_for_prescription(trial_id, test_ratio=0.2):
     :param test_ratio: ratio of test data
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
-    df = pd.read_pickle('/home/huuyang/DataAndCode/Dataset/diabetes.p')
+    df = pd.read_pickle('/home/rchen15/prescription/presription_shared/diabetes.p')
 
     prescription_columns = ['prescription_oral', 'prescription_injectable']
     hist_pres_columns = ['hist_prescription_oral', 'hist_prescription_injectable']
@@ -74,7 +74,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     :param test_ratio: ratio of test data
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
-    df = pd.read_pickle('/home/rchen15/prescription/presription_shared/hypertension.p')
+    df = pd.read_csv('/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv',nrows=10e4,on_bad_lines='skip')
     not_use_columns = ['measure_systolic_future', 'visits_in_regimen', 'measure_height',
                        'measure_o2_saturation', 'measure_respiratory_rate', 'measure_temperature',
                        'measure_weight', 'diag_042', 'diag_070', 'diag_110', 'diag_174',
@@ -87,7 +87,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
                          'hist_prescription_BetaBlocker', 'hist_prescription_CCB', 'hist_prescription_Diuretics']
     useful_feature = [item for item in df.columns.tolist()
                       if item not in not_use_columns and item not in prescription_columns]
-
+    print(df[useful_feature].shape)
     X = np.array(df[useful_feature].values, dtype=np.float32)
     y = np.array(df['measure_systolic_future'].values, dtype=np.float32)
     z = np.array(df[prescription_columns].values, dtype=int)

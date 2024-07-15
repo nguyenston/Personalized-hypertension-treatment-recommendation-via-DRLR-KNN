@@ -1,6 +1,5 @@
 import sys
-sys.path.append('/home/huuyang/DataAndCode/Select-Optimal-Decisions-via-DRO-KNN-master')
-
+sys.path.append('/home/yeping/dro_knn')
 import pickle
 import json
 import argparse

@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/rchen15/prescription/run_pres')
+sys.path.append('/home/yeping/dro_knn')
 import pickle
 import json
 import argparse
