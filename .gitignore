@@ -11,4 +11,5 @@ devenv.local.nix
 # env
 .env
 __pycache__
+pyenv
 y
