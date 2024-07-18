@@ -11,8 +11,8 @@ sys.path.append('/home/yeping/HTNProject/Personalized-hypertension-treatment-rec
 import numpy as np
 from scipy import optimize, sparse
 
-from sklearn.linear_model.base import BaseEstimator, RegressorMixin
-from sklearn.linear_model.base import LinearModel
+from sklearn.linear_model._base import BaseEstimator, RegressorMixin
+from sklearn.linear_model._base import LinearModel
 from sklearn.utils import check_X_y
 from sklearn.utils import check_consistent_length
 from sklearn.utils._mask import axis0_safe_slice

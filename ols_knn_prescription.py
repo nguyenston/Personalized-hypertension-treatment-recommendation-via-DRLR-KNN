@@ -1,5 +1,5 @@
 import sys
-sys.path.append('/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN')
+sys.path.append('/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master')
 import pickle
 import os
 import argparse
@@ -9,7 +9,7 @@ from shutil import rmtree
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.pipeline import Pipeline
-from sklearn.externals.joblib import Memory
+from joblib import Memory
 from load_table import load_diabetes_final_table_for_prescription, \
     load_hypertension_final_table_for_prescription
 from sklearn.model_selection import GridSearchCV, ShuffleSplit
@@ -21,7 +21,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--trial", type=int, default=0)
 parser.add_argument("--test_ratio", type=float, default=0.2)
-parser.add_argument("--save_dir", type=str, default='../ckpt/hypertension/')
+parser.add_argument("--save_dir", type=str, default='/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN/ckpt/hypertension')
 parser.add_argument("--diabetes", type=str2bool, default=False)
 
 args = parser.parse_args()

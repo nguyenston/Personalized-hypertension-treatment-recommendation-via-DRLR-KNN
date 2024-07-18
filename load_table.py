@@ -74,23 +74,15 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
     df = pd.read_csv('/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv',nrows=10e4,on_bad_lines='skip')
-    not_use_columns = ['measure_systolic_future', 'visits_in_regimen', 'measure_height',
-                       'measure_o2_saturation', 'measure_respiratory_rate', 'measure_temperature',
-                       'measure_weight', 'diag_042', 'diag_070', 'diag_110', 'diag_174',
-                       'diag_185', 'hist_prescription_ACEI', 'hist_prescription_ARB',
-                       'hist_prescription_AlphaBlocker', 'hist_prescription_BetaBlocker',
-                       'hist_prescription_CCB', 'hist_prescription_Diuretics']
-    prescription_columns = ['prescription_ACEI', 'prescription_ARB', 'prescription_AlphaBlocker',
-                            'prescription_BetaBlocker', 'prescription_CCB', 'prescription_Diuretics']
-    hist_pres_columns = ['hist_prescription_ACEI', 'hist_prescription_ARB', 'hist_prescription_AlphaBlocker',
-                         'hist_prescription_BetaBlocker', 'hist_prescription_CCB', 'hist_prescription_Diuretics']
+    not_use_columns = ['PatientEpicKey','PatientDurableKey']
+    prescription_columns = ['Pulse90_Avg','Thiazide_Ind','Thiazide90_Ind','Thiazide90180_Ind', 'CalciumChannelBlock_Ind','CalciumChannelBlock90180_Ind','CalciumChannelBlock90_Ind','ARB_Ind','ARB90180_Ind','ARB90_Ind','ACEI_Ind','ACEI90_Ind','ACEI90180_Ind','BetaBlock_Ind','BetaBlock90_Ind','BetaBlock90180_Ind','LoopDiuretic_Ind','LoopDiuretic90_Ind','LoopDiuretic90180_Ind','Leuprolide22_Ind','Cyclopentolate1Pct_Ind','Augmentin875_Ind','MineralcorticoidRecAnt_Ind','MineralcorticoidRecAnt90_Ind','MineralcorticoidRecAnt90180_Ind']
+    hist_pres_columns = []
     useful_feature = [item for item in df.columns.tolist()
                       if item not in not_use_columns and item not in prescription_columns]
-    print(df[useful_feature].shape)
-    X = np.array(df[useful_feature].values, dtype=np.float32)
-    y = np.array(df['measure_systolic_future'].values, dtype=np.float32)
-    z = np.array(df[prescription_columns].values, dtype=int)
-    u = np.array(df[hist_pres_columns].values, dtype=int)
+    X = df[useful_feature].to_numpy()
+    y = df['Pulse90_Avg'].to_numpy()
+    z = df[prescription_columns].to_numpy()
+    u = df[prescription_columns].to_numpy()
 
     z_c = z[:, 0] + 2 * z[:, 1] + 4 * z[:, 2] + 8 * z[:, 3] + 16 * z[:, 4] + 32 * z[:, 5]
     z_c = np.asanyarray(z_c, dtype=int)

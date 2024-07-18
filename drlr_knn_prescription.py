@@ -26,7 +26,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--trial", type=int, default=0)
 parser.add_argument("--test_ratio", type=float, default=0.2)
-parser.add_argument("--save_dir", type=str, default='/home/yeping/dro_knn/hypertension/')
+parser.add_argument("--save_dir", type=str, default='/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN/ckpt/hypertension')
 parser.add_argument("--diabetes", type=str2bool, default=False)
 
 args = parser.parse_args()
