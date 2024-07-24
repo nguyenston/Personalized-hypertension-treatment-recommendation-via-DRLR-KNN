@@ -1,5 +1,8 @@
 import sys
-sys.path.append('/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN')
+
+sys.path.append(
+    "/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN"
+)
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import ShuffleSplit
@@ -15,14 +18,21 @@ def load_diabetes_final_table_for_prescription(trial_id, test_ratio=0.2):
     :param test_ratio: ratio of test data
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
-    df = pd.read_csv('/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv',nrows=10e4,on_bad_lines='skip')
-    prescription_columns = ['prescription_oral', 'prescription_injectable']
-    hist_pres_columns = ['hist_prescription_oral', 'hist_prescription_injectable']
-    useful_feature = [item for item in df.columns.tolist() if
-                      item not in prescription_columns and item != 'future_a1c']
+    df = pd.read_csv(
+        "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv",
+        nrows=int(10e4),
+        on_bad_lines="skip",
+    )
+    prescription_columns = ["prescription_oral", "prescription_injectable"]
+    hist_pres_columns = ["hist_prescription_oral", "hist_prescription_injectable"]
+    useful_feature = [
+        item
+        for item in df.columns.tolist()
+        if item not in prescription_columns and item != "future_a1c"
+    ]
 
     X = np.array(df[useful_feature].values, dtype=np.float32)
-    y = np.array(df['future_a1c'].values, dtype=np.float32)
+    y = np.array(df["future_a1c"].values, dtype=np.float32)
     z = np.array(df[prescription_columns].values, dtype=int)
     u = np.array(df[hist_pres_columns].values, dtype=int)
 
@@ -64,7 +74,16 @@ def load_diabetes_final_table_for_prescription(trial_id, test_ratio=0.2):
         test_z.append(z_test)
         test_u.append(u_test)
 
-    return train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
+    return (
+        train_all_x,
+        train_all_y,
+        train_all_z,
+        train_all_u,
+        test_x,
+        test_y,
+        test_z,
+        test_u,
+    )
 
 
 # NOTE: Function of interests
@@ -75,19 +94,50 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     :param test_ratio: ratio of test data
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
-    df = pd.read_csv("/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv",nrows=1000,on_bad_lines="skip")
-    not_use_columns = ["PatientEpicKey","PatientDurableKey","LastServDate_UrineCult",
-                       "LastServDate_OfficeVisit","PatientEndDate","LookBackDate"]
+    df = pd.read_csv(
+        "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv",
+        nrows=1000,
+        on_bad_lines="skip",
+    )
+    not_use_columns = [
+        "PatientEpicKey",
+        "PatientDurableKey",
+        "LastServDate_UrineCult",
+        "LastServDate_OfficeVisit",
+        "PatientEndDate",
+        "LookBackDate",
+    ]
     prescription_columns = [
-        "Thiazide90_Ind", "CalciumChannelBlock90_Ind", "ARB90_Ind","ACEI90_Ind", "BetaBlock90_Ind",
-        "LoopDiuretic90_Ind", "MineralcorticoidRecAnt90_Ind"
+        "Thiazide90_Ind",
+        "CalciumChannelBlock90_Ind",
+        "ARB90_Ind",
+        "ACEI90_Ind",
+        "BetaBlock90_Ind",
+        "LoopDiuretic90_Ind",
+        "MineralcorticoidRecAnt90_Ind",
     ]
-    hist_pres_columns = ["Thiazide_Ind", "CalciumChannelBlock_Ind", "ARB_Ind","ACEI_Ind", "BetaBlock_Ind",
-        "LoopDiuretic_Ind", "Leuprolide22_Ind", "Cyclopentolate1Pct_Ind", "Augmentin875_Ind", "MineralcorticoidRecAnt_Ind"
+    hist_pres_columns = [
+        "Thiazide_Ind",
+        "CalciumChannelBlock_Ind",
+        "ARB_Ind",
+        "ACEI_Ind",
+        "BetaBlock_Ind",
+        "LoopDiuretic_Ind",
+        "Leuprolide22_Ind",
+        "Cyclopentolate1Pct_Ind",
+        "Augmentin875_Ind",
+        "MineralcorticoidRecAnt_Ind",
     ]
-    useful_feature = [item for item in df.columns.tolist()
-                      if item not in not_use_columns and item not in prescription_columns and item not in hist_pres_columns]
-    X = pd.get_dummies(df[useful_feature], columns = ["LegalSex","GeneralRace","SmokingStatus"]).to_numpy()
+    useful_feature = [
+        item
+        for item in df.columns.tolist()
+        if item not in not_use_columns
+        and item not in prescription_columns
+        and item not in hist_pres_columns
+    ]
+    X = pd.get_dummies(
+        df[useful_feature], columns=["LegalSex", "GeneralRace", "SmokingStatus"]
+    ).to_numpy()
     y = df["SBP90_Avg"].to_numpy()
     z = df[prescription_columns].to_numpy()
     u = df[hist_pres_columns].to_numpy()
