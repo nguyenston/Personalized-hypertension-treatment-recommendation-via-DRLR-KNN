@@ -73,10 +73,16 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     :param test_ratio: ratio of test data
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
-    df = pd.read_csv('/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv',nrows=10e4,on_bad_lines='skip')
-    not_use_columns = ['PatientEpicKey','PatientDurableKey']
-    prescription_columns = ['Pulse90_Avg','Thiazide_Ind','Thiazide90_Ind','Thiazide90180_Ind', 'CalciumChannelBlock_Ind','CalciumChannelBlock90180_Ind','CalciumChannelBlock90_Ind','ARB_Ind','ARB90180_Ind','ARB90_Ind','ACEI_Ind','ACEI90_Ind','ACEI90180_Ind','BetaBlock_Ind','BetaBlock90_Ind','BetaBlock90180_Ind','LoopDiuretic_Ind','LoopDiuretic90_Ind','LoopDiuretic90180_Ind','Leuprolide22_Ind','Cyclopentolate1Pct_Ind','Augmentin875_Ind','MineralcorticoidRecAnt_Ind','MineralcorticoidRecAnt90_Ind','MineralcorticoidRecAnt90180_Ind']
-    hist_pres_columns = []
+    df = pd.read_csv("/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv",nrows=1000,on_bad_lines="skip")
+    not_use_columns = ["PatientEpicKey","PatientDurableKey","LastServDate_UrineCult",
+                       "LastServDate_OfficeVisit","PatientEndDate","LookBackDate"]
+    prescription_columns = [
+        "Thiazide90_Ind", "CalciumChannelBlock90_Ind", "ARB90_Ind","ACEI90_Ind", "BetaBlock90_Ind",
+        "LoopDiuretic90_Ind", "MineralcorticoidRecAnt90_Ind"
+    ]
+    hist_pres_columns = ["Thiazide_Ind", "CalciumChannelBlock_Ind", "ARB_Ind","ACEI_Ind", "BetaBlock_Ind",
+        "LoopDiuretic_Ind", "Leuprolide22_Ind", "Cyclopentolate1Pct_Ind", "Augmentin875_Ind", "MineralcorticoidRecAnt_Ind"
+    ]
     useful_feature = [item for item in df.columns.tolist()
                       if item not in not_use_columns and item not in prescription_columns]
     X = df[useful_feature].to_numpy()
