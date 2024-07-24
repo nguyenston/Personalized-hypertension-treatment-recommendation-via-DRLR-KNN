@@ -84,11 +84,11 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         "LoopDiuretic_Ind", "Leuprolide22_Ind", "Cyclopentolate1Pct_Ind", "Augmentin875_Ind", "MineralcorticoidRecAnt_Ind"
     ]
     useful_feature = [item for item in df.columns.tolist()
-                      if item not in not_use_columns and item not in prescription_columns]
-    X = df[useful_feature].to_numpy()
-    y = df['Pulse90_Avg'].to_numpy()
+                      if item not in not_use_columns and item not in prescription_columns and item not in hist_pres_columns]
+    X = pd.get_dummies(df[useful_feature], columns = ["LegalSex","GeneralRace","SmokingStatus"]).to_numpy()
+    y = df["SBP90_Avg"].to_numpy()
     z = df[prescription_columns].to_numpy()
-    u = df[prescription_columns].to_numpy()
+    u = df[hist_pres_columns].to_numpy()
 
     z_c = z[:, 0] + 2 * z[:, 1] + 4 * z[:, 2] + 8 * z[:, 3] + 16 * z[:, 4] + 32 * z[:, 5]
     z_c = np.asanyarray(z_c, dtype=int)
