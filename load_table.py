@@ -7,6 +7,7 @@ from collections import Counter
 from util import get_base_path
 
 
+# NOTE: This function is irrelevant to the project as we only deal with hypertension
 def load_diabetes_final_table_for_prescription(trial_id, test_ratio=0.2):
     """
     load preprocess diabetes data
@@ -66,6 +67,7 @@ def load_diabetes_final_table_for_prescription(trial_id, test_ratio=0.2):
     return train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
 
 
+# NOTE: Function of interests
 def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     """
     load preprocess hypertension data
@@ -90,12 +92,20 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     z = df[prescription_columns].to_numpy()
     u = df[hist_pres_columns].to_numpy()
 
-    z_c = z[:, 0] + 2 * z[:, 1] + 4 * z[:, 2] + 8 * z[:, 3] + 16 * z[:, 4] + 32 * z[:, 5]
+    # Encode data from multiple columns as a single bitstring, as the datatype is flag 0/1
+    # In this case, a combination of medications is grouped up as a "prescription"
+    z_c = (
+        z[:, 0] + 2 * z[:, 1] + 4 * z[:, 2] + 8 * z[:, 3] + 16 * z[:, 4] + 32 * z[:, 5]
+    )
     z_c = np.asanyarray(z_c, dtype=int)
 
-    u_c = u[:, 0] + 2 * u[:, 1] + 4 * u[:, 2] + 8 * u[:, 3] + 16 * u[:, 4] + 32 * u[:, 5]
+    u_c = (
+        u[:, 0] + 2 * u[:, 1] + 4 * u[:, 2] + 8 * u[:, 3] + 16 * u[:, 4] + 32 * u[:, 5]
+    )
     u_c = np.asanyarray(u_c, dtype=int)
 
+    # assign id to prescriptions, prescriptions not in the most 19 commonly used ones are assigned the same id
+    # in other words, we are grouping up rare prescriptions into one single classification
     commom_19 = [item[0] for item in Counter(z_c).most_common(19)]
     new_id = {item: item_id for item_id, item in enumerate(commom_19)}
     for i in range(64):
@@ -139,4 +149,13 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         test_z.append(z_test)
         test_u.append(u_test)
 
-    return train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
+    return (
+        train_all_x,
+        train_all_y,
+        train_all_z,
+        train_all_u,
+        test_x,
+        test_y,
+        test_z,
+        test_u,
+    )
