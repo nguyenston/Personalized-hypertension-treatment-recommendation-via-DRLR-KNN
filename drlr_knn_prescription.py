@@ -74,7 +74,7 @@ def find_best_parameter_each_group(data):
         ], memory=memory)
 
         num_train = len(x)
-        num_sample_point = min((num_train / 2) - 3, 30)
+        num_sample_point = min((num_train // 2) - 3, 30)
         sr_point = np.linspace(1, np.sqrt(num_train / 2), num_sample_point)
         knn_space = list(set([int(np.square(xx)) for xx in sr_point]))
         
