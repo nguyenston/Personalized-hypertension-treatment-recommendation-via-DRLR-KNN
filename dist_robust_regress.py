@@ -158,7 +158,7 @@ class DistributionallyRobustRegressor(LinearModel, RegressorMixin, BaseEstimator
 #                                 " l-BFGS-b solver terminated with %s"
 #                                 % dict_['task'].decode('ascii'))
 #            self.n_iter_ = dict_.get('nit', None)
-            res = optimize.minimize(_drr_loss_and_gradient, parameters, args=(arg_X, y, self.reg_l2, self.reg_l1), method = 'SLSQP', options={'disp': False, 'maxiter': self.max_iter}) 
+            res = optimize.minimize(_drr_loss_and_gradient, parameters, args=(arg_X, y, self.reg_l2, self.reg_l1), method = 'L-BFGS-B', options={'disp': False, 'maxiter': self.max_iter}) 
             # Nelder-Mead does not work, so change to some convex optimization method for scipy, such as SLSQP)
             parameters = res.x
 
