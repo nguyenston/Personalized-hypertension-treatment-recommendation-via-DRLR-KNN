@@ -138,7 +138,7 @@ class DistributionallyRobustRegressor(LinearModel, RegressorMixin, BaseEstimator
                 else:
                     parameters = np.random.rand(X.shape[1])
 
-            parameters = np.reshape(parameters, [-1, 1])
+            parameters = np.squeeze(np.reshape(parameters, [-1, 1]))
 
             # Type Error caused in old versions of SciPy because of no
             # maxiter argument ( <= 0.9).

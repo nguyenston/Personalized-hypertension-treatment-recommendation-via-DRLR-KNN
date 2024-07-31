@@ -73,7 +73,6 @@ def find_best_parameter_each_group(data):
     num_prescription = len(data["train_x"])
     all_parameters = []
     for i in range(num_prescription):
-        print("cp1: ", i)
         x = data["train_x"][i]
         y = data["train_y"][i]
 
@@ -106,10 +105,9 @@ def find_best_parameter_each_group(data):
             parameter_grid,
             cv=5,
             scoring="neg_median_absolute_error",
-            error_score=0,
+            error_score='raise',
             refit=False,
         )
-        print("cp2: ", i)
         estimator_search.fit(x, y)
         best_parameters = estimator_search.best_params_
         all_parameters.append([
