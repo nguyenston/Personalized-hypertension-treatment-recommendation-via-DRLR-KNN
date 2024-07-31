@@ -43,8 +43,11 @@ def build_validation_set_prescription(all_x, all_y, all_u, test_size=.40):
 
     for i in range(num_prescription):
         x, y, u = all_x[i], all_y[i], all_u[i]
-        rs = ShuffleSplit(n_splits=1, test_size = test_size, random_state=0)
-        train_index, test_index = rs.split(x).__next__()
+        if test_size > 0:
+            rs = ShuffleSplit(n_splits=1, test_size = test_size, random_state=0)
+            train_index, test_index = rs.split(x).__next__()
+        else:
+            train_index, test_index = np.array(range(len(x))), np.array([], dtype=int)
         X_train_all, X_test = x[train_index], x[test_index]
         y_train_all, y_test = y[train_index], y[test_index]
         u_train_all, u_test = u[train_index], u[test_index]
