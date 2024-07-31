@@ -46,5 +46,4 @@ class DRLRTransformer(BaseEstimator, TransformerMixin):
         self.scale_factor_ = np.reshape(np.abs(self.scale_factor_), [1, -1])
 
     def transform(self, X):
-        X_reshape = np.multiply(X, self.scale_factor_)
-        return X_reshape
+        return np.multiply(X, self.scale_factor_)
