@@ -106,7 +106,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         "LastServDate_OfficeVisit",
         "PatientEndDate",
         "LookBackDate",
-        "SBPFuture_Avg"
+        "SBPFuture_Avg",
     ]
     prescription_columns = [
         "Thiazide90_Ind",
@@ -138,51 +138,131 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     ]
     # Apply one-hot encoding
     df = pd.get_dummies(
-        df[useful_feature], columns=["LegalSex", "GeneralRace", "SmokingStatus"],
-        dtype=int
+        df[useful_feature],
+        columns=["LegalSex", "GeneralRace", "SmokingStatus"],
+        dtype=int,
     )
 
     # Impute by two logics for numerical/categorical values with the same PatientEpicKey.
-    numerical_columns=[
-        "RedCellDist_Avg","MeanCorpHemo_Avg","PartialPressureCO2_Avg","MeanCorpHemoConcentrate_Avg",
-    "AnionGapNoPotassium_Avg","NeutrophilCnt_Avg","LymphocytesCnt_Avg","MonocytesPct",
-    "Monocytes_Avg","Basophils_Avg","BodySurfaceArea","Eosinophils_Avg",
-    "NucleatedRBC_Avg","AbsNeutrophilPCT_Avg","UrinePH_Avg","UrineSpecificGravity_Avg",
-    "Glucose_Avg","Leukocyte_Avg","GlucoseWBGV_Avg",
-    "EosinophilsPCT_Avg","MeanCorpusHemoRBC_Avg","Chloride_Avg","Cholesterol_Avg",
-    "Sodium_Avg","SerumCreatinine_Avg","Albumin_Avg","BasophilsPCT_Avg","HDL_Avg",
-    "HemoA1C_Avg","AlkalinePhosphate_Avg","LDLDirect_Avg","MeanCorpuscVol_Avg","LymphocytesPCT_Avg",
-    "AspartateAminoTran_Avg","AlanineAminoTran_Avg","Bilirubin_Avg","Triglycerides_Avg",
-    "Hematocrit_Avg","Hemoglobin_Avg","Platelet_Avg","BloodUreaNitrogen_Avg",
-    "SBP90_Avg", "SBP90180_Avg", "SBP180270_Avg","DBP90_Avg","DBP90180_Avg","DBP180270_Avg", 
-    "Temp90_Avg","Temp90180_Avg","Temp180270_Avg","SPO2_90_Avg","SPO2_90180_Avg","SPO2_180270_Avg",
-    "Respiration90_Avg","Respiration90180_Avg","Respiration180270_Avg","Pulse90_Avg","Pulse90180_Avg",
-    "Pulse180270_Avg","BMI90_Avg","BMI90180_Avg","BMI180270_Avg"
+    numerical_columns = [
+        "RedCellDist_Avg",
+        "MeanCorpHemo_Avg",
+        "PartialPressureCO2_Avg",
+        "MeanCorpHemoConcentrate_Avg",
+        "AnionGapNoPotassium_Avg",
+        "NeutrophilCnt_Avg",
+        "LymphocytesCnt_Avg",
+        "MonocytesPct",
+        "Monocytes_Avg",
+        "Basophils_Avg",
+        "BodySurfaceArea",
+        "Eosinophils_Avg",
+        "NucleatedRBC_Avg",
+        "AbsNeutrophilPCT_Avg",
+        "UrinePH_Avg",
+        "UrineSpecificGravity_Avg",
+        "Glucose_Avg",
+        "Leukocyte_Avg",
+        "GlucoseWBGV_Avg",
+        "EosinophilsPCT_Avg",
+        "MeanCorpusHemoRBC_Avg",
+        "Chloride_Avg",
+        "Cholesterol_Avg",
+        "Sodium_Avg",
+        "SerumCreatinine_Avg",
+        "Albumin_Avg",
+        "BasophilsPCT_Avg",
+        "HDL_Avg",
+        "HemoA1C_Avg",
+        "AlkalinePhosphate_Avg",
+        "LDLDirect_Avg",
+        "MeanCorpuscVol_Avg",
+        "LymphocytesPCT_Avg",
+        "AspartateAminoTran_Avg",
+        "AlanineAminoTran_Avg",
+        "Bilirubin_Avg",
+        "Triglycerides_Avg",
+        "Hematocrit_Avg",
+        "Hemoglobin_Avg",
+        "Platelet_Avg",
+        "BloodUreaNitrogen_Avg",
+        "SBP90_Avg",
+        "SBP90180_Avg",
+        "SBP180270_Avg",
+        "DBP90_Avg",
+        "DBP90180_Avg",
+        "DBP180270_Avg",
+        "Temp90_Avg",
+        "Temp90180_Avg",
+        "Temp180270_Avg",
+        "SPO2_90_Avg",
+        "SPO2_90180_Avg",
+        "SPO2_180270_Avg",
+        "Respiration90_Avg",
+        "Respiration90180_Avg",
+        "Respiration180270_Avg",
+        "Pulse90_Avg",
+        "Pulse90180_Avg",
+        "Pulse180270_Avg",
+        "BMI90_Avg",
+        "BMI90180_Avg",
+        "BMI180270_Avg",
     ]
-    categorical_columns=[item for item in df.columns.tolist() if item not in numerical_columns and item not in not_use_columns]
+    categorical_columns = [
+        item
+        for item in df.columns.tolist()
+        if item not in numerical_columns and item not in not_use_columns
+    ]
+
     # Function to impute missing values by median within each group
     def impute_numerical_by_median(group):
-        return group.apply(lambda x: x.fillna(x.median()) if x.name in numerical_columns else x, axis=0)
+        return group.apply(
+            lambda x: x.fillna(x.median()) if x.name in numerical_columns else x, axis=0
+        )
 
     # Function to forward fill categorical columns within each group
     def forward_fill_categorical(group):
-        return group.apply(lambda x: x.ffill() if x.name in categorical_columns else x, axis=0)
+        return group.apply(
+            lambda x: x.ffill() if x.name in categorical_columns else x, axis=0
+        )
 
     # Apply the functions to each group
-    df = df.groupby('PatientEpicKey').apply(impute_numerical_by_median).reset_index(drop=True)
-    df = df.groupby('PatientEpicKey').apply(forward_fill_categorical).reset_index(drop=True)
+    df = (
+        df.groupby("PatientEpicKey")
+        .apply(impute_numerical_by_median)
+        .reset_index(drop=True)
+    )
+    df = (
+        df.groupby("PatientEpicKey")
+        .apply(forward_fill_categorical)
+        .reset_index(drop=True)
+    )
 
     X = df.to_numpy()
     y = df["SBP90_Avg"].to_numpy()
     z = df[prescription_columns].to_numpy()
     u = df[hist_pres_columns].to_numpy()
 
-    z_c = z[:, 0] + 2 * z[:, 1] + 4 * z[:, 2] + 8 * z[:, 3] + 16 * z[:, 4] + 32 * z[:, 5] + 64 * z[:, 6]
+    z_c = (
+        z[:, 0]
+        + 2 * z[:, 1]
+        + 4 * z[:, 2]
+        + 8 * z[:, 3]
+        + 16 * z[:, 4]
+        + 32 * z[:, 5]
+        + 64 * z[:, 6]
+    )
     z_c = np.asanyarray(z_c, dtype=int)
 
-    u_c = u[:, 0] + 2 * u[:, 1] + 4 * u[:, 2] + 8 * u[:, 3] + 16 * u[:, 4] + 32 * u[:, 5] + (
-        64 * u[:, 6] + 128 * u[:, 7] + 256 * u[:, 8] + 512 * u[:, 9]
-        )
+    u_c = (
+        u[:, 0]
+        + 2 * u[:, 1]
+        + 4 * u[:, 2]
+        + 8 * u[:, 3]
+        + 16 * u[:, 4]
+        + 32 * u[:, 5]
+        + (64 * u[:, 6] + 128 * u[:, 7] + 256 * u[:, 8] + 512 * u[:, 9])
+    )
     u_c = np.asanyarray(u_c, dtype=int)
 
     commom_19 = [item[0] for item in Counter(z_c).most_common(19)]
@@ -209,9 +289,11 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         this_y = y[valid_id]
         this_z = z[valid_id]
         this_u = u[valid_id]
-        print(pres_id,this_X)
+
+        print(pres_id, this_X)
         rs = ShuffleSplit(n_splits=1, test_size=test_ratio, random_state=trial_id)
         train_index, test_index = rs.split(this_X).__next__()
+
         X_train_all, X_test = this_X[train_index], this_X[test_index]
         y_train_all, y_test = this_y[train_index], this_y[test_index]
         z_train_all, z_test = this_z[train_index], this_z[test_index]
