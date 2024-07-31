@@ -129,19 +129,14 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         "Augmentin875_Ind",
         "MineralcorticoidRecAnt_Ind",
     ]
-    useful_feature = [
-        item
-        for item in df.columns.tolist()
-        if item not in not_use_columns
-        and item not in prescription_columns
-        and item not in hist_pres_columns
-    ]
+    
     # Apply one-hot encoding
     df = pd.get_dummies(
-        df[useful_feature],
+        df,
         columns=["LegalSex", "GeneralRace", "SmokingStatus"],
         dtype=int,
     )
+
 
     # Impute by two logics for numerical/categorical values with the same PatientEpicKey.
     numerical_columns = [
@@ -237,8 +232,14 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         .apply(forward_fill_categorical)
         .reset_index(drop=True)
     )
-
-    X = df.to_numpy()
+    useful_feature = [
+        item
+        for item in df.columns.tolist()
+        if item not in not_use_columns
+        and item not in prescription_columns
+        and item not in hist_pres_columns
+    ]
+    X = df[useful_feature].to_numpy()
     y = df["SBP90_Avg"].to_numpy()
     z = df[prescription_columns].to_numpy()
     u = df[hist_pres_columns].to_numpy()
@@ -261,7 +262,10 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         + 8 * u[:, 3]
         + 16 * u[:, 4]
         + 32 * u[:, 5]
-        + (64 * u[:, 6] + 128 * u[:, 7] + 256 * u[:, 8] + 512 * u[:, 9])
+        + 64 * u[:, 6] 
+        + 128 * u[:, 7] 
+        + 256 * u[:, 8]
+        + 512 * u[:, 9]
     )
     u_c = np.asanyarray(u_c, dtype=int)
 
@@ -290,7 +294,6 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         this_z = z[valid_id]
         this_u = u[valid_id]
 
-        print(pres_id, this_X)
         rs = ShuffleSplit(n_splits=1, test_size=test_ratio, random_state=trial_id)
         train_index, test_index = rs.split(this_X).__next__()
 
