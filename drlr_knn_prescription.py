@@ -56,7 +56,7 @@ def fit_drlr_knn_submodels(x, y, num_neighbor, reg_l2, random_seed=0):
         (
             "knn",
             KNeighborsRegressor(
-                n_neighbors=int(num_neighbor * np.sqrt(0.9)), weights=foo
+                n_neighbors=np.maximum(1, int(num_neighbor * np.sqrt(0.9))), weights=foo
             ),
         ),
     ])
