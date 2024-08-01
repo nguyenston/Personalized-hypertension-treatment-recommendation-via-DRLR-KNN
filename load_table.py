@@ -98,6 +98,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv",
         nrows=1000,
         on_bad_lines="skip",
+        dtype=str,
     )
     not_use_columns = [
         "PatientEpicKey",
@@ -218,7 +219,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     # Function to forward fill categorical columns within each group
 
     # Apply the functions to each group
-    df=df.apply(pd.to_numeric, errors='coerce')
+    df = df.apply(pd.to_numeric, errors="coerce")
     df = (
         df.groupby("PatientEpicKey")
         .apply(impute_numerical_by_median, include_groups=False)
