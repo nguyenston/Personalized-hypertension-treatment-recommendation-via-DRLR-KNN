@@ -130,14 +130,13 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         "Augmentin875_Ind",
         "MineralcorticoidRecAnt_Ind",
     ]
-    
+
     # Apply one-hot encoding
     df = pd.get_dummies(
         df,
         columns=["LegalSex", "GeneralRace", "SmokingStatus"],
         dtype=int,
     )
-
 
     # Impute by two logics for numerical/categorical values with the same PatientEpicKey.
     numerical_columns = [
@@ -204,11 +203,12 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         "BMI90180_Avg",
         "BMI180270_Avg",
     ]
-    categorical_columns = [
+    boolean_columns = [
         item
         for item in df.columns.tolist()
         if item not in numerical_columns and item not in not_use_columns
     ]
+    df = df.apply(pd.to_numeric, errors="coerce")
 
     # Function to impute missing values by median within each group
     def impute_numerical_by_median(table):
@@ -216,17 +216,14 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         values = {c: med[c] for c in numerical_columns}
         return table.fillna(value=values)
 
-    # Function to forward fill categorical columns within each group
-
     # Apply the functions to each group
-    df = df.apply(pd.to_numeric, errors="coerce")
     df = (
         df.groupby("PatientEpicKey")
         .apply(impute_numerical_by_median, include_groups=False)
         .reset_index(level=0)
     )
-    
-    df[categorical_columns] = df.groupby("PatientEpicKey")[categorical_columns].ffill()
+    df[boolean_columns] = df.groupby("PatientEpicKey")[boolean_columns].ffill().bfill()
+
     useful_feature = [
         item
         for item in df.columns.tolist()
