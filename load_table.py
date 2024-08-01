@@ -210,28 +210,22 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     ]
 
     # Function to impute missing values by median within each group
-    def impute_numerical_by_median(group):
-        return group.apply(
-            lambda x: x.fillna(x.median()) if x.name in numerical_columns else x, axis=0
-        )
+    def impute_numerical_by_median(table):
+        med = table.median()
+        values = {c: med[c] for c in numerical_columns}
+        return table.fillna(value=values)
 
     # Function to forward fill categorical columns within each group
-    def forward_fill_categorical(group):
-        return group.apply(
-            lambda x: x.ffill() if x.name in categorical_columns else x, axis=0
-        )
 
     # Apply the functions to each group
+    df=df.apply(pd.to_numeric, errors='coerce')
     df = (
         df.groupby("PatientEpicKey")
-        .apply(impute_numerical_by_median)
-        .reset_index(drop=True)
+        .apply(impute_numerical_by_median, include_groups=False)
+        .reset_index(level=0)
     )
-    df = (
-        df.groupby("PatientEpicKey")
-        .apply(forward_fill_categorical)
-        .reset_index(drop=True)
-    )
+    
+    df[categorical_columns] = df.groupby("PatientEpicKey")[categorical_columns].ffill()
     useful_feature = [
         item
         for item in df.columns.tolist()
