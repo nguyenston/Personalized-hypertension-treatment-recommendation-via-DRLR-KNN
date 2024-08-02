@@ -3,6 +3,7 @@ import sys
 sys.path.append(
     "/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN"
 )
+from joblib import numpy_pickle_compat
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import ShuffleSplit
@@ -95,8 +96,8 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
     df = pd.read_csv(
-        "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/HTN_RegistryOutput.csv",
-        nrows=1000,
+        "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/FullFiles/Processed/HTN_RegistryOutput_2024-07-03.csv",
+        # nrows=10000,
         on_bad_lines="skip",
         dtype=str,
     )
@@ -139,6 +140,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     )
 
     # Impute by two logics for numerical/categorical values with the same PatientEpicKey.
+    # Commented out entries are deprecated and is no longer used
     numerical_columns = [
         "RedCellDist_Avg",
         "MeanCorpHemo_Avg",
@@ -188,20 +190,20 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         "DBP90180_Avg",
         "DBP180270_Avg",
         "Temp90_Avg",
-        "Temp90180_Avg",
-        "Temp180270_Avg",
+        # "Temp90180_Avg",
+        # "Temp180270_Avg",
         "SPO2_90_Avg",
-        "SPO2_90180_Avg",
-        "SPO2_180270_Avg",
+        # "SPO2_90180_Avg",
+        # "SPO2_180270_Avg",
         "Respiration90_Avg",
-        "Respiration90180_Avg",
-        "Respiration180270_Avg",
+        # "Respiration90180_Avg",
+        # "Respiration180270_Avg",
         "Pulse90_Avg",
-        "Pulse90180_Avg",
-        "Pulse180270_Avg",
+        # "Pulse90180_Avg",
+        # "Pulse180270_Avg",
         "BMI90_Avg",
-        "BMI90180_Avg",
-        "BMI180270_Avg",
+        # "BMI90180_Avg",
+        # "BMI180270_Avg",
     ]
     boolean_columns = [
         item
@@ -236,6 +238,9 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         and item not in prescription_columns
         and item not in hist_pres_columns
     ]
+    for col in useful_feature:
+        if bool(df[col].isnull().any()):
+            print(col)
     X = df[useful_feature].to_numpy()
     y = df["SBP90_Avg"].to_numpy()
     z = df[prescription_columns].to_numpy()
