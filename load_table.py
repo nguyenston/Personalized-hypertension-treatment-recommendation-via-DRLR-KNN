@@ -222,7 +222,12 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         .apply(impute_numerical_by_median, include_groups=False)
         .reset_index(level=0)
     )
+    df[numerical_columns] = df[numerical_columns].fillna(
+        df[numerical_columns].median().to_dict()
+    )
+
     df[boolean_columns] = df.groupby("PatientEpicKey")[boolean_columns].ffill().bfill()
+    df[boolean_columns] = df[boolean_columns].fillna(value=0)
 
     useful_feature = [
         item
@@ -254,8 +259,8 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         + 8 * u[:, 3]
         + 16 * u[:, 4]
         + 32 * u[:, 5]
-        + 64 * u[:, 6] 
-        + 128 * u[:, 7] 
+        + 64 * u[:, 6]
+        + 128 * u[:, 7]
         + 256 * u[:, 8]
         + 512 * u[:, 9]
     )
