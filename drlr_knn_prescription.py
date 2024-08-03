@@ -75,7 +75,6 @@ def find_best_parameter_each_group(data):
     for i in range(num_prescription):
         x = data["train_x"][i]
         y = data["train_y"][i]
-
         cachedir = mkdtemp()
         memory = Memory(location=cachedir, verbose=0)
 
@@ -99,6 +98,12 @@ def find_best_parameter_each_group(data):
             "transformer__reg_l2": reg_l2_space,
             "knn__n_neighbors": knn_space,
         }
+        print("i = ", i)
+        print("nfitcalls = ", len(reg_l2_space) * len(knn_space))
+        print(reg_l2_space)
+        print(knn_space)
+        print(num_train)
+
 
         estimator_search = GridSearchCV(
             informed_knn,
@@ -138,6 +143,7 @@ def obtain_best_model(data, best_parameters):
     lm = LinearRegression(fit_intercept=False)
     lm.fit(all_n, all_k)
     rho = lm.coef_[0]
+    print("rho = ", rho)
 
     # build regression models
     model_collections = {"core_model": [], "submodels": []}
@@ -145,6 +151,7 @@ def obtain_best_model(data, best_parameters):
 
     num_prescription = len(all_n)
     for i in range(num_prescription):
+        print("i = ", i)
         x = data["train_x"][i]
         y = data["train_y"][i]
 
@@ -217,7 +224,7 @@ def main():
 
     print("Finding best parameters for different groups")
     best_prediction_param = find_best_parameter_each_group(data)
-
+    print(len(data),len(best_prediction_param))
     print("Finding best models and submodels")
     model_collection, model_imputation_conf = obtain_best_model(
         data, best_prediction_param

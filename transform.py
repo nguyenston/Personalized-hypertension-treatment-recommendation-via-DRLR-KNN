@@ -35,6 +35,7 @@ class DRLRTransformer(BaseEstimator, TransformerMixin):
         self.scale_factor_ = None
 
     def fit(self, x, y):
+        print("L2 = ", self.reg_l2)
         self._fit(x, y)
         return self
 
