@@ -27,7 +27,9 @@ class OLSTransformer(BaseEstimator, TransformerMixin):
 
 
 class DRLRTransformer(BaseEstimator, TransformerMixin):
-    def __init__(self, reg_l2=0.1, reg_l1=0.1, solver='scipy'):
+    # WARNING: k parameter for debug purposes, to be removed later
+    def __init__(self, reg_l2=0.1, reg_l1=0.1, k=0, solver="scipy"):
+        self.k = k
         self.reg_l2 = reg_l2
         self.reg_l1 = reg_l1
         self.solver = solver
@@ -35,7 +37,7 @@ class DRLRTransformer(BaseEstimator, TransformerMixin):
         self.scale_factor_ = None
 
     def fit(self, x, y):
-        print("L2 = ", self.reg_l2)
+        print("L2 = {}\t K = {}".format(self.reg_l2, self.k))
         self._fit(x, y)
         return self
 

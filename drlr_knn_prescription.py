@@ -93,24 +93,27 @@ def find_best_parameter_each_group(data):
         pp = np.sqrt(np.linalg.norm(np.dot(np.transpose(x), y), ord=1) / num_train)
         reg_l2_space = np.logspace(np.log(pp / 200), np.log(pp), 10, base=np.exp(1))
 
-        parameter_grid = {
-            "transformer__reg_l1": [0],
-            "transformer__reg_l2": reg_l2_space,
-            "knn__n_neighbors": knn_space,
-        }
+        parameter_grid = [
+            {
+                "transformer__reg_l1": [0],
+                "transformer__reg_l2": reg_l2_space,
+                "transformer__k": [k],
+                "knn__n_neighbors": [k],
+            }
+            for k in knn_space
+        ]
         print("i = ", i)
         print("nfitcalls = ", len(reg_l2_space) * len(knn_space))
         print(reg_l2_space)
         print(knn_space)
         print(num_train)
 
-
         estimator_search = GridSearchCV(
             informed_knn,
             parameter_grid,
             cv=5,
             scoring="neg_median_absolute_error",
-            error_score='raise',
+            error_score="raise",
             refit=False,
         )
         estimator_search.fit(x, y)
