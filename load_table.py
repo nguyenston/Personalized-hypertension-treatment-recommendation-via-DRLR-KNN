@@ -228,7 +228,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         df[numerical_columns].median().to_dict()
     )
 
-    df[boolean_columns] = df.groupby("PatientEpicKey")[boolean_columns].ffill().bfill()
+    df[boolean_columns] = df.groupby("PatientEpicKey")[boolean_columns].ffill()
     df[boolean_columns] = df[boolean_columns].fillna(value=0)
 
     useful_feature = [
