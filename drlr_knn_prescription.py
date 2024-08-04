@@ -92,7 +92,9 @@ def find_best_parameter_each_group(data):
         num_train = len(x)
         num_sample_point = min(int(num_train / 2) - 3, 30)
         sr_point = np.linspace(1, np.sqrt(num_train / 2), num_sample_point)
-        knn_space = list(set([int(np.square(xx)) for xx in sr_point]))
+        knn_space = sorted(
+            filter(lambda x: x <= 45000, set([int(np.square(xx)) for xx in sr_point]))
+        )
 
         pp = np.sqrt(np.linalg.norm(np.dot(np.transpose(x), y), ord=1) / num_train)
         reg_l2_space = np.logspace(np.log(pp / 200), np.log(pp), 10, base=np.exp(1))
@@ -146,7 +148,7 @@ def obtain_best_model(data, best_parameters):
 
     all_n = np.array(all_n).reshape([-1, 1])
 
-    # regression
+    # learn suitable K as a linear function of sqrt(n)
     lm = LinearRegression(fit_intercept=False)
     lm.fit(all_n, all_k)
     rho = lm.coef_[0]

@@ -1,5 +1,8 @@
 import sys
-sys.path.append('/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN')
+
+sys.path.append(
+    "/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN"
+)
 import numpy as np
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import LinearRegression
@@ -42,7 +45,9 @@ class DRLRTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def _fit(self, x, y):
-        drlr = DistributionallyRobustRegressor(reg_l2=self.reg_l2, reg_l1=self.reg_l1, solver=self.solver)
+        drlr = DistributionallyRobustRegressor(
+            reg_l2=self.reg_l2, reg_l1=self.reg_l1, solver=self.solver
+        )
         drlr.fit(x, y)
 
         self.scale_factor_ = drlr.coef_
