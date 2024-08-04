@@ -13,23 +13,25 @@ import argparse
 import pandas as pd
 
 
-def foo(dist_orig):
-    if dist_orig.shape[1] == 1:  # only 1 neighbor
-        rr = np.ones(dist_orig.shape)
+# Uniform weights, but neighbors after abrupt changes in distance will be pruned
+def localized_uniform(distances):
+    if distances.shape[1] == 1:  # only 1 neighbor
+        weights = np.ones(distances.shape)
     else:
-        dist = np.sort(dist_orig, -1)
-        rr = np.zeros(dist.shape)
-        for i in range(dist.shape[0]):
-            a = dist[i]
-            cum_mean = pd.Series(a).expanding().mean()
-            b = a[1:] - cum_mean[0 : len(cum_mean) - 1]
-            n_temp = np.argmax(b) + 1  # the number of neighbors
-            ind = np.argsort(dist_orig[i])
-            if np.true_divide(max(b), cum_mean[n_temp - 1]) > 1:
-                rr[i, ind[0:n_temp]] = 1
+        sorted_distances = np.sort(distances, -1)
+        weights = np.zeros(sorted_distances.shape)
+        for i in range(sorted_distances.shape[0]):
+            dist = sorted_distances[i]
+            cum_mean = pd.Series(dist).expanding().mean()
+            dist_from_cum_mean = dist[1:] - cum_mean[0:-1]
+            n_temp = np.argmax(dist_from_cum_mean) + 1  # the number of neighbors
+            ind = np.argsort(distances[i])
+
+            if np.true_divide(max(dist_from_cum_mean), cum_mean[n_temp - 1]) > 1:
+                weights[i, ind[0:n_temp]] = 1
             else:
-                rr[i] = 1
-    return rr
+                weights[i] = 1
+    return weights
 
 
 def str2bool(v):
@@ -108,7 +110,9 @@ def get_impute_outcome(x_collection, y_collection, impute_dict):
         transformer = impute_dict["transformer"][pres_id]
 
         x = transformer.transform(x)
-        knn_model = KNeighborsRegressor(n_neighbors=n_neighbor, weights=foo)
+        knn_model = KNeighborsRegressor(
+            n_neighbors=n_neighbor, weights=localized_uniform
+        )
         knn_model.fit(x, y)
 
         all_x_trans = transformer.transform(all_x)

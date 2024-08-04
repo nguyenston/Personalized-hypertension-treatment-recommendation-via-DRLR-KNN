@@ -22,7 +22,7 @@ from load_table import (
 from sklearn.model_selection import GridSearchCV, ShuffleSplit
 from transform import DRLRTransformer
 from joblib import Parallel, delayed
-from util import build_validation_set_prescription, str2bool, foo
+from util import build_validation_set_prescription, str2bool, localized_uniform
 
 parser = argparse.ArgumentParser()
 
@@ -56,7 +56,8 @@ def fit_drlr_knn_submodels(x, y, num_neighbor, reg_l2, random_seed=0):
         (
             "knn",
             KNeighborsRegressor(
-                n_neighbors=np.maximum(1, int(num_neighbor * np.sqrt(0.9))), weights=foo
+                n_neighbors=np.maximum(1, int(num_neighbor * np.sqrt(0.9))),
+                weights=localized_uniform,
             ),
         ),
     ])
@@ -81,7 +82,10 @@ def find_best_parameter_each_group(data):
         transformer = DRLRTransformer(solver="scipy")
 
         informed_knn = Pipeline(
-            [("transformer", transformer), ("knn", KNeighborsRegressor(weights=foo))],
+            [
+                ("transformer", transformer),
+                ("knn", KNeighborsRegressor(weights=localized_uniform)),
+            ],
             memory=memory,
         )
 
@@ -164,7 +168,12 @@ def obtain_best_model(data, best_parameters):
         )
         informed_knn = Pipeline([
             ("transformer", transformer),
-            ("knn", KNeighborsRegressor(n_neighbors=num_neighbor, weights=foo)),
+            (
+                "knn",
+                KNeighborsRegressor(
+                    n_neighbors=num_neighbor, weights=localized_uniform
+                ),
+            ),
         ])
         informed_knn.fit(x, y)
         model_collections["core_model"].append(informed_knn)
