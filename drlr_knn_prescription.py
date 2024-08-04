@@ -31,7 +31,7 @@ parser.add_argument("--test_ratio", type=float, default=0.2)
 parser.add_argument(
     "--save_dir",
     type=str,
-    default="/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN/ckpt/hypertension",
+    default="/home/HTNclinical/run-outputs/",
 )
 parser.add_argument("--diabetes", type=str2bool, default=False)
 
@@ -238,7 +238,7 @@ def main():
 
     print("Finding best parameters for different groups")
     best_prediction_param = find_best_parameter_each_group(data)
-    print(len(data),len(best_prediction_param))
+    print(len(data), len(best_prediction_param))
     print("Finding best models and submodels")
     model_collection, model_imputation_conf = obtain_best_model(
         data, best_prediction_param
