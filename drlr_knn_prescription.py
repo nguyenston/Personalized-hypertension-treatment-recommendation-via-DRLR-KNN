@@ -89,11 +89,12 @@ def find_best_parameter_each_group(data):
             memory=memory,
         )
 
-        num_train = len(x)
-        num_sample_point = min(int(num_train / 2) - 3, 30)
-        sr_point = np.linspace(1, np.sqrt(num_train / 2), num_sample_point)
+        num_train = len(x) #2*1e6
+        num_train_capped = min(num_train, 10000 * 2)
+        num_sample_point = min(int(num_train_capped / 2) - 3, 15)
+        sr_point = np.linspace(1, np.sqrt(num_train_capped / 2), num_sample_point) # 30 points
         knn_space = sorted(
-            filter(lambda x: x <= 45000, set([int(np.square(xx)) for xx in sr_point]))
+            set([int(np.square(xx)) for xx in sr_point])
         )
 
         pp = np.sqrt(np.linalg.norm(np.dot(np.transpose(x), y), ord=1) / num_train)
