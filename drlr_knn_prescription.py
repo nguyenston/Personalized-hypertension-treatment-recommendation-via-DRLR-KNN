@@ -76,7 +76,7 @@ def find_best_parameter_each_group(data):
     for i in range(num_prescription):
         x = data["train_x"][i]
         y = data["train_y"][i]
-        cachedir = mkdtemp()
+        cachedir = "/home/HTNclinical/drlrknn-cache"
         memory = Memory(location=cachedir, verbose=0)
 
         transformer = DRLRTransformer(solver="scipy")
