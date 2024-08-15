@@ -99,17 +99,9 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
     file_stem = "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/FullFiles/Processed/HTN_RegistryOutput_2024-07-03"
-    nrows = 2e5
+    nrows = None
     pickle_file_name = file_stem + "-nrows=" + str(nrows) + ".pkl"
-    if not os.path.isfile(pickle_file_name):
-        df = pd.read_csv(
-            file_stem + ".csv",
-            nrows=nrows,
-            on_bad_lines="skip",
-            dtype=str,
-        )
-        
-        not_use_columns = [
+    not_use_columns = [
             "PatientEpicKey",
             "PatientDurableKey",
             "LastServDate_UrineCult",
@@ -118,7 +110,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
             "LookBackDate",
             "SBPFuture_Avg",
         ]
-        prescription_columns = [
+    prescription_columns = [
             "Thiazide90_Ind",
             "CalciumChannelBlock90_Ind",
             "ARB90_Ind",
@@ -127,7 +119,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
             "LoopDiuretic90_Ind",
             "MineralcorticoidRecAnt90_Ind",
         ]
-        hist_pres_columns = [
+    hist_pres_columns = [
             "Thiazide_Ind",
             "CalciumChannelBlock_Ind",
             "ARB_Ind",
@@ -139,6 +131,14 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
             "Augmentin875_Ind",
             "MineralcorticoidRecAnt_Ind",
         ]
+    if not os.path.isfile(pickle_file_name):
+        df = pd.read_csv(
+            file_stem + ".csv",
+            nrows=nrows,
+            on_bad_lines="skip",
+            dtype=str,
+        )
+        
 
         # Apply one-hot encoding
         df = pd.get_dummies(
