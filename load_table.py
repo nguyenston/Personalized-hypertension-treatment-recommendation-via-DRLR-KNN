@@ -9,9 +9,12 @@ import numpy as np
 from sklearn.model_selection import ShuffleSplit
 from collections import Counter
 from util import get_base_path
+import pickle
+import os.path
 
 
 # NOTE: This function is irrelevant to the project as we only deal with hypertension
+
 def load_diabetes_final_table_for_prescription(trial_id, test_ratio=0.2):
     """
     load preprocess diabetes data
@@ -95,141 +98,152 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     :param test_ratio: ratio of test data
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
-    df = pd.read_csv(
-        "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/FullFiles/Processed/HTN_RegistryOutput_2024-07-03.csv",
-        # nrows=10000,
-        on_bad_lines="skip",
-        dtype=str,
-    )
-    not_use_columns = [
-        "PatientEpicKey",
-        "PatientDurableKey",
-        "LastServDate_UrineCult",
-        "LastServDate_OfficeVisit",
-        "PatientEndDate",
-        "LookBackDate",
-        "SBPFuture_Avg",
-    ]
-    prescription_columns = [
-        "Thiazide90_Ind",
-        "CalciumChannelBlock90_Ind",
-        "ARB90_Ind",
-        "ACEI90_Ind",
-        "BetaBlock90_Ind",
-        "LoopDiuretic90_Ind",
-        "MineralcorticoidRecAnt90_Ind",
-    ]
-    hist_pres_columns = [
-        "Thiazide_Ind",
-        "CalciumChannelBlock_Ind",
-        "ARB_Ind",
-        "ACEI_Ind",
-        "BetaBlock_Ind",
-        "LoopDiuretic_Ind",
-        "Leuprolide22_Ind",
-        "Cyclopentolate1Pct_Ind",
-        "Augmentin875_Ind",
-        "MineralcorticoidRecAnt_Ind",
-    ]
+    file_stem = "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/FullFiles/Processed/HTN_RegistryOutput_2024-07-03"
+    nrows = 2e5
+    pickle_file_name = file_stem + "-nrows=" + str(nrows) + ".pkl"
+    if not os.path.isfile(pickle_file_name):
+        df = pd.read_csv(
+            file_stem + ".csv",
+            nrows=nrows,
+            on_bad_lines="skip",
+            dtype=str,
+        )
+        
+        not_use_columns = [
+            "PatientEpicKey",
+            "PatientDurableKey",
+            "LastServDate_UrineCult",
+            "LastServDate_OfficeVisit",
+            "PatientEndDate",
+            "LookBackDate",
+            "SBPFuture_Avg",
+        ]
+        prescription_columns = [
+            "Thiazide90_Ind",
+            "CalciumChannelBlock90_Ind",
+            "ARB90_Ind",
+            "ACEI90_Ind",
+            "BetaBlock90_Ind",
+            "LoopDiuretic90_Ind",
+            "MineralcorticoidRecAnt90_Ind",
+        ]
+        hist_pres_columns = [
+            "Thiazide_Ind",
+            "CalciumChannelBlock_Ind",
+            "ARB_Ind",
+            "ACEI_Ind",
+            "BetaBlock_Ind",
+            "LoopDiuretic_Ind",
+            "Leuprolide22_Ind",
+            "Cyclopentolate1Pct_Ind",
+            "Augmentin875_Ind",
+            "MineralcorticoidRecAnt_Ind",
+        ]
 
-    # Apply one-hot encoding
-    df = pd.get_dummies(
-        df,
-        columns=["LegalSex", "GeneralRace", "SmokingStatus"],
-        dtype=int,
-    )
+        # Apply one-hot encoding
+        df = pd.get_dummies(
+            df,
+            columns=["LegalSex", "GeneralRace", "SmokingStatus"],
+            dtype=int,
+        )
+        # Impute by two logics for numerical/categorical values with the same PatientEpicKey.
+        # Commented out entries are deprecated and is no longer used
+        numerical_columns = [
+            "RedCellDist_Avg",
+            "MeanCorpHemo_Avg",
+            "PartialPressureCO2_Avg",
+            "MeanCorpHemoConcentrate_Avg",
+            "AnionGapNoPotassium_Avg",
+            "NeutrophilCnt_Avg",
+            "LymphocytesCnt_Avg",
+            "MonocytesPct",
+            "Monocytes_Avg",
+            "Basophils_Avg",
+            "BodySurfaceArea",
+            "Eosinophils_Avg",
+            "NucleatedRBC_Avg",
+            "AbsNeutrophilPCT_Avg",
+            "UrinePH_Avg",
+            "UrineSpecificGravity_Avg",
+            "Glucose_Avg",
+            "Leukocyte_Avg",
+            "GlucoseWBGV_Avg",
+            "EosinophilsPCT_Avg",
+            "MeanCorpusHemoRBC_Avg",
+            "Chloride_Avg",
+            "Cholesterol_Avg",
+            "Sodium_Avg",
+            "SerumCreatinine_Avg",
+            "Albumin_Avg",
+            "BasophilsPCT_Avg",
+            "HDL_Avg",
+            "HemoA1C_Avg",
+            "AlkalinePhosphate_Avg",
+            "LDLDirect_Avg",
+            "MeanCorpuscVol_Avg",
+            "LymphocytesPCT_Avg",
+            "AspartateAminoTran_Avg",
+            "AlanineAminoTran_Avg",
+            "Bilirubin_Avg",
+            "Triglycerides_Avg",
+            "Hematocrit_Avg",
+            "Hemoglobin_Avg",
+            "Platelet_Avg",
+            "BloodUreaNitrogen_Avg",
+            "SBP90_Avg",
+            "SBP90180_Avg",
+            "SBP180270_Avg",
+            "DBP90_Avg",
+            "DBP90180_Avg",
+            "DBP180270_Avg",
+            "Temp90_Avg",
+            # "Temp90180_Avg",
+            # "Temp180270_Avg",
+            "SPO2_90_Avg",
+            # "SPO2_90180_Avg",
+            # "SPO2_180270_Avg",
+            "Respiration90_Avg",
+            # "Respiration90180_Avg",
+            # "Respiration180270_Avg",
+            "Pulse90_Avg",
+            # "Pulse90180_Avg",
+            # "Pulse180270_Avg",
+            "BMI90_Avg",
+            # "BMI90180_Avg",
+            # "BMI180270_Avg",
+        ]
+        boolean_columns = [
+            item
+            for item in df.columns.tolist()
+            if item not in numerical_columns and item not in not_use_columns
+        ]
+        df = df.apply(pd.to_numeric, errors="coerce")
 
-    # Impute by two logics for numerical/categorical values with the same PatientEpicKey.
-    # Commented out entries are deprecated and is no longer used
-    numerical_columns = [
-        "RedCellDist_Avg",
-        "MeanCorpHemo_Avg",
-        "PartialPressureCO2_Avg",
-        "MeanCorpHemoConcentrate_Avg",
-        "AnionGapNoPotassium_Avg",
-        "NeutrophilCnt_Avg",
-        "LymphocytesCnt_Avg",
-        "MonocytesPct",
-        "Monocytes_Avg",
-        "Basophils_Avg",
-        "BodySurfaceArea",
-        "Eosinophils_Avg",
-        "NucleatedRBC_Avg",
-        "AbsNeutrophilPCT_Avg",
-        "UrinePH_Avg",
-        "UrineSpecificGravity_Avg",
-        "Glucose_Avg",
-        "Leukocyte_Avg",
-        "GlucoseWBGV_Avg",
-        "EosinophilsPCT_Avg",
-        "MeanCorpusHemoRBC_Avg",
-        "Chloride_Avg",
-        "Cholesterol_Avg",
-        "Sodium_Avg",
-        "SerumCreatinine_Avg",
-        "Albumin_Avg",
-        "BasophilsPCT_Avg",
-        "HDL_Avg",
-        "HemoA1C_Avg",
-        "AlkalinePhosphate_Avg",
-        "LDLDirect_Avg",
-        "MeanCorpuscVol_Avg",
-        "LymphocytesPCT_Avg",
-        "AspartateAminoTran_Avg",
-        "AlanineAminoTran_Avg",
-        "Bilirubin_Avg",
-        "Triglycerides_Avg",
-        "Hematocrit_Avg",
-        "Hemoglobin_Avg",
-        "Platelet_Avg",
-        "BloodUreaNitrogen_Avg",
-        "SBP90_Avg",
-        "SBP90180_Avg",
-        "SBP180270_Avg",
-        "DBP90_Avg",
-        "DBP90180_Avg",
-        "DBP180270_Avg",
-        "Temp90_Avg",
-        # "Temp90180_Avg",
-        # "Temp180270_Avg",
-        "SPO2_90_Avg",
-        # "SPO2_90180_Avg",
-        # "SPO2_180270_Avg",
-        "Respiration90_Avg",
-        # "Respiration90180_Avg",
-        # "Respiration180270_Avg",
-        "Pulse90_Avg",
-        # "Pulse90180_Avg",
-        # "Pulse180270_Avg",
-        "BMI90_Avg",
-        # "BMI90180_Avg",
-        # "BMI180270_Avg",
-    ]
-    boolean_columns = [
-        item
-        for item in df.columns.tolist()
-        if item not in numerical_columns and item not in not_use_columns
-    ]
-    df = df.apply(pd.to_numeric, errors="coerce")
+        # Function to impute missing values by median within each group
+        def impute_numerical_by_median(table):
+            med = table.median()
+            values = {c: med[c] for c in numerical_columns}
+            return table.fillna(value=values)
 
-    # Function to impute missing values by median within each group
-    def impute_numerical_by_median(table):
-        med = table.median()
-        values = {c: med[c] for c in numerical_columns}
-        return table.fillna(value=values)
+        # Apply the functions to each group
+        df = (
+            df.groupby("PatientEpicKey")
+            .apply(impute_numerical_by_median, include_groups=False)
+            .reset_index(level=0)
+        )
+        df[numerical_columns] = df[numerical_columns].fillna(
+            df[numerical_columns].median().to_dict()
+        )
 
-    # Apply the functions to each group
-    df = (
-        df.groupby("PatientEpicKey")
-        .apply(impute_numerical_by_median, include_groups=False)
-        .reset_index(level=0)
-    )
-    df[numerical_columns] = df[numerical_columns].fillna(
-        df[numerical_columns].median().to_dict()
-    )
-
-    df[boolean_columns] = df.groupby("PatientEpicKey")[boolean_columns].ffill()
-    df[boolean_columns] = df[boolean_columns].fillna(value=0)
+        df[boolean_columns] = df.groupby("PatientEpicKey")[boolean_columns].ffill()
+        df[boolean_columns] = df[boolean_columns].fillna(value=0)
+        pickle.dump(
+            df,
+            open(pickle_file_name, "wb"),
+        )
+        print("Finish Imputation")
+    else:
+        df = pd.read_pickle(pickle_file_name)
 
     useful_feature = [
         item
@@ -288,7 +302,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     test_y = []
     test_z = []
     test_u = []
-
+    print("Finish counters")
     for pres_id in range(20):
         valid_id = z == pres_id
         this_X = X[valid_id]
@@ -313,6 +327,8 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         test_y.append(y_test)
         test_z.append(z_test)
         test_u.append(u_test)
+
+    print("Finish Preprocess")
 
     return (
         train_all_x,
