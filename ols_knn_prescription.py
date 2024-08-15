@@ -58,8 +58,8 @@ def find_best_ols_knn_parameter_each_group(data):
         x = data['train_x'][i]
         y = data['train_y'][i]
 
-        cachedir = mkdtemp()
-        memory = Memory(cachedir=cachedir, verbose=0)
+        cachedir = "/home/HTNclinical/drlrknn-cache"
+        memory = Memory(location=cachedir, verbose=0)
 
         transformer = OLSTransformer()
 
@@ -67,11 +67,19 @@ def find_best_ols_knn_parameter_each_group(data):
             ('transformer', transformer),
             ('knn', KNeighborsRegressor())
         ], memory=memory)
-
+        """
         num_train = len(x)
         num_sample_point = min((num_train / 2) - 3, 30)
         sr_point = np.linspace(1, np.sqrt(num_train / 2), num_sample_point)
         knn_space = list(set([int(np.square(xx)) for xx in sr_point]))
+        """
+        num_train = len(x) #2*1e6
+        num_train_capped = min(num_train, 10000 * 2)
+        num_sample_point = min(int(num_train_capped / 2) - 3, 15)
+        sr_point = np.linspace(1, np.sqrt(num_train_capped / 2), num_sample_point) # 30 points
+        knn_space = sorted(
+            set([int(np.square(xx)) for xx in sr_point])
+        )
 
         parameter_grid = {'knn__n_neighbors': knn_space}
 
