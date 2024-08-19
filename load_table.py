@@ -99,7 +99,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     :return: train_all_x, train_all_y, train_all_z, train_all_u, test_x, test_y, test_z, test_u
     """
     file_stem = "/home/HTNclinical/Select-Optimal-Decisions-via-DRO-KNN-master/training-data/FullFiles/Processed/HTN_RegistryOutput_2024-07-03"
-    nrows = None
+    nrows = 2e5
     pickle_file_name = file_stem + "-nrows=" + str(nrows) + ".pkl"
     not_use_columns = [
             "PatientEpicKey",
@@ -259,6 +259,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     y = df["SBP90_Avg"].to_numpy()
     z = df[prescription_columns].to_numpy()
     u = df[hist_pres_columns].to_numpy()
+    print(X.shape)
 
     z_c = (
         z[:, 0]
@@ -286,6 +287,7 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
     u_c = np.asanyarray(u_c, dtype=int)
 
     commom_19 = [item[0] for item in Counter(z_c).most_common(19)]
+    print(commom_19)
     new_id = {item: item_id for item_id, item in enumerate(commom_19)}
     for i in range(1024):
         if i not in new_id.keys():
@@ -327,7 +329,6 @@ def load_hypertension_final_table_for_prescription(trial_id, test_ratio=0.2):
         test_y.append(y_test)
         test_z.append(z_test)
         test_u.append(u_test)
-
     print("Finish Preprocess")
 
     return (

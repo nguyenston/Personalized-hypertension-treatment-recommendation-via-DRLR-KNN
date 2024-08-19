@@ -42,6 +42,7 @@ class DRLRTransformer(BaseEstimator, TransformerMixin):
     def fit(self, x, y):
         print("L2 = {}\t K = {}".format(self.reg_l2, self.k))
         self._fit(x, y)
+        print("Done fitting drlr")
         return self
 
     def _fit(self, x, y):

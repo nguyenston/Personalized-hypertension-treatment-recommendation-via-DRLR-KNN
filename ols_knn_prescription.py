@@ -83,9 +83,14 @@ def find_best_ols_knn_parameter_each_group(data):
 
         parameter_grid = {'knn__n_neighbors': knn_space}
 
+        print("i = ", i)
+        print(knn_space)
+        print(num_train)
+
         estimator_search = GridSearchCV(informed_knn, parameter_grid,
                                         cv=3, scoring='neg_mean_squared_error',
                                         error_score=0, refit=False)
+        
         estimator_search.fit(x, y)
         best_parameters = estimator_search.best_params_
         all_parameters.append(best_parameters['knn__n_neighbors'])
