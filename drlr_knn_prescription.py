@@ -98,7 +98,7 @@ def find_best_parameter_each_group(data):
         )
 
         pp = np.sqrt(np.linalg.norm(np.dot(np.transpose(x), y), ord=1) / num_train)
-        reg_l2_space = np.logspace(np.log(pp / 200), np.log(pp), 10, base=np.exp(1))
+        reg_l2_space = np.logspace(np.log(pp / 20000), np.log(pp/350), 10, base=np.exp(1))
 
         parameter_grid = [
             {
@@ -118,11 +118,12 @@ def find_best_parameter_each_group(data):
         estimator_search = GridSearchCV(
             informed_knn,
             parameter_grid,
-            cv=5,
+            cv=3,
             scoring="neg_median_absolute_error",
             error_score="raise",
             refit=False,n_jobs=-1
         )
+
         estimator_search.fit(x, y)
         best_parameters = estimator_search.best_params_
         all_parameters.append([
@@ -144,7 +145,7 @@ def obtain_best_model(data, best_parameters):
     """
     # regress k
     # IMPORTANT: cv use 5-fold, all_n in the training will be int(len(item) / 5 * 4)
-    all_n = [np.sqrt(int(len(item) / 5 * 4)) for item in data["train_y"]]
+    all_n = [np.sqrt(int(len(item) / 3 * 2)) for item in data["train_y"]]
     all_k = [item[1] for item in best_parameters]
 
     all_n = np.array(all_n).reshape([-1, 1])
