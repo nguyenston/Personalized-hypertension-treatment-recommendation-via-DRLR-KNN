@@ -84,7 +84,7 @@ def _drr_loss_and_gradient(w, X, y, reg_l2, reg_l1):
 
 # TODO: add document
 class DistributionallyRobustRegressor(LinearModel, RegressorMixin, BaseEstimator):
-    def __init__(self, reg_l2=0.1, reg_l1=0.1, max_iter=5000,
+    def __init__(self, reg_l2=0, reg_l1=0, max_iter=5000,
                  warm_start=False, fit_intercept=True, tol=1e-05,
                  solver='scipy'):
         self.reg_l2 = reg_l2
