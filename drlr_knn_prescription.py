@@ -121,7 +121,7 @@ def find_best_parameter_each_group(data):
             cv=5,
             scoring="neg_median_absolute_error",
             error_score="raise",
-            refit=False,
+            refit=False,n_jobs=-1
         )
         estimator_search.fit(x, y)
         best_parameters = estimator_search.best_params_
@@ -174,7 +174,9 @@ def obtain_best_model(data, best_parameters):
             (
                 "knn",
                 KNeighborsRegressor(
-                    n_neighbors=num_neighbor, weights=localized_uniform
+                    n_neighbors=num_neighbor, 
+                    weights=localized_uniform,
+                    n_jobs=-1
                 ),
             ),
         ])
