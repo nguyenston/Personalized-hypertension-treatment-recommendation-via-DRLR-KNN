@@ -21,7 +21,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("--trial", type=int, default=0)
 parser.add_argument("--test_ratio", type=float, default=0.2)
-parser.add_argument("--save_dir", type=str, default='/home/yeping/HTNProject/Personalized-hypertension-treatment-recommendation-via-DRLR-KNN/ckpt/hypertension')
+parser.add_argument("--save_dir", type=str, default='/home/HTNclinical/ckpt/hypertension')
 parser.add_argument("--diabetes", type=str2bool, default=False)
 
 args = parser.parse_args()
@@ -41,7 +41,7 @@ def fit_ols_knn_submodels(x, y, num_neighbor, random_seed=0):
     sub_x, sub_y = x[train_index], y[train_index]
     transformer = OLSTransformer()
     informed_knn = Pipeline(
-        [('transformer', transformer), ('knn', KNeighborsRegressor(n_neighbors=int(num_neighbor*np.sqrt(0.9))))])
+        [('transformer', transformer), ('knn', KNeighborsRegressor(n_neighbors=np.maximum(1, int(num_neighbor * np.sqrt(0.9)))))])
     informed_knn.fit(sub_x, sub_y)
     return informed_knn
 
@@ -84,7 +84,7 @@ def find_best_ols_knn_parameter_each_group(data):
         parameter_grid = {'knn__n_neighbors': knn_space}
 
         estimator_search = GridSearchCV(informed_knn, parameter_grid,
-                                        cv=5, scoring='neg_mean_squared_error',
+                                        cv=3, scoring='neg_mean_squared_error',
                                         error_score=0, refit=False)
         estimator_search.fit(x, y)
         best_parameters = estimator_search.best_params_
